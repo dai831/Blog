@@ -1,0 +1,99 @@
+
+a {
+	font-weight: 500;
+	color: #ed64ff;
+	text-decoration: inherit;
+}
+
+a:hover {
+	color: #53cdf2;
+}
+
+.flex {
+	display: flex;
+	align-items: center;
+	justify-content: start;
+}
+.flex_end {
+	display: flex;
+	align-items: center;
+	flex-direction: row;
+	justify-content: flex-end;
+}
+.flex_column {
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	flex-direction: column;
+}
+.flex_center {
+	display: flex;
+	align-items: center;
+	justify-content: center;
+}
+
+.flex_between {
+	display: flex;
+	align-items: center;
+	justify-content: space-between;
+}
+
+.flex_around {
+	display: flex;
+	align-items: center;
+	justify-content: space-around;
+}
+
+
+.loading_css{
+	width: fit-content;
+	background: linear-gradient(to right, #ffde40 0%, rgb(39, 148, 53) 50%, #41e5d6 100%) 50% 0 / 0% 2px no-repeat;
+    animation: loding1 3s linear infinite;
+}
+
+.loading_text:hover{
+	width: fit-content;
+	background: linear-gradient(to right, #56ff40 0%, rgb(39, 148, 53) 50%, #41e5d6 100%) 0% 100% / 0% 1px no-repeat;
+	padding-bottom: 5px;
+    animation: loding2 0.5s ease-in-out forwards;
+}
+
+.dotted_title{
+	transition: all 0.3s linear;
+	position: relative;
+	padding: 0 0 0.5rem;
+}
+.dotted_title:hover{
+	color: #53cdf2;
+	cursor: pointer;
+}
+
+.dotted_title::after{
+	position: absolute;
+	content: "";
+	left: 0;
+	bottom: 0px;
+	width: 0;
+	height: 1px;
+	border: none;
+	border-top: 1px dashed #000;
+	transition: all 0.3s linear;
+}
+
+.text_overflow{
+	white-space: nowrap; /* 确保文本不换行 */
+	overflow: hidden; /* 超出容器部分隐藏 */
+	text-overflow: ellipsis; /* 超出部分显示省略号 */
+}
+
+@keyframes loding1 {
+    to {
+        background-size: 100% 3px;
+    }
+}
+
+@keyframes loding2 {
+    to {
+		background-size: 100% 1px;
+    }
+}

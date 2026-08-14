@@ -1,0 +1,14 @@
+/* 引入基础样式 */
+@import url('./style.css');
+
+/*引入滚动条样式  */
+@import url('./scrollbar.css');
+
+/* 引入全局的样式 */
+@import url('./global.css');
+
+/* 引入图片加载样式 */
+@import url('./imglazy.css');
+
+/* 引入饿了么样式调整 */
+@import url('./elementplus.css');
