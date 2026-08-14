@@ -2,6 +2,7 @@
     <div class="login">
         <div class="login_center">
             <div class="login_form">
+                我是来闹着玩的
                 <el-form :model="formData" ref="refFormData" :rules="formRules">
                     <template v-if="isRegister">
                         <el-form-item id="usernameId" :label="$t('login.username')" prop="username">
