@@ -1,5 +1,19 @@
 import { createApp } from 'vue'
+import { createRouter, createWebHistory } from 'vue-router'
 import App from './App.vue'
-import './style.css'
+import './styles/main.css'
 
-createApp(App).mount('#app')
+const router = createRouter({
+  history: createWebHistory(),
+  routes: [
+    { path: '/', redirect: '/index' },
+    { path: '/index', component: App },
+    { path: '/:pathMatch(.*)*', redirect: '/index' }
+  ],
+  scrollBehavior(to) {
+    if (to.hash) return { el: to.hash, behavior: 'smooth' }
+    return { top: 0 }
+  }
+})
+
+createApp(App).use(router).mount('#app')

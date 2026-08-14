@@ -1,57 +1,73 @@
 export const siteData = {
-  brand: 'OUR UNIVERSE',
-  nav: ['首页', '关于我们', '故事', '回忆', '纪念日'],
-  hero: {
-    eyebrow: 'TWO SOULS · ONE STORY',
-    titleTop: '我们不是完美的人',
-    titleBottom: '但刚好适合彼此。',
-    description: '这里记录两个人的日常、旅行、碎碎念和那些值得反复回看的瞬间。没有复杂的功能，只有我们。',
-    since: '2024.05.20',
-    quote: '“比起永远，我更喜欢每天。”'
+  couple: {
+    leftName: '小野',
+    rightName: '一花',
+    title: 'Two of Us',
+    subtitle: '把普通的日子，过成值得收藏的故事。',
+    since: '2024-05-20',
+    anniversary: '05-20',
+    city: 'Chengdu · Tokyo',
+    intro: '这里没有宏大的叙事，只有两个人认真生活留下的证据。我们把相遇、旅行、争吵后的拥抱、突然的浪漫，还有那些毫不起眼的小事，一点一点放进这里。'
   },
-  people: [
-    {
-      key: 'a',
-      name: '一花',
-      alias: 'YIHUA',
-      role: '白昼 / 咖啡 / 旅行计划制造机',
-      bio: '喜欢海边、晚风、拍照，还有把平凡日子过得稍微浪漫一点。',
-      tags: ['摄影', '咖啡', '旅行', 'Vue3'],
-      avatarText: 'Y'
-    },
-    {
-      key: 'b',
-      name: '阿泽',
-      alias: 'AZE',
-      role: '夜晚 / 音乐 / 氛围感维护员',
-      bio: '喜欢音乐、夜景、电影，以及在所有普通时刻认真陪伴。',
-      tags: ['音乐', '电影', '夜景', '记录'],
-      avatarText: 'A'
-    }
+  nav: [
+    ['home', '首页'], ['story', '我们的故事'], ['moments', '日常碎片'], ['gallery', '照片墙'],
+    ['letters', '写给你'], ['wishlist', '愿望清单'], ['music', '一起听'], ['about', '关于我们']
   ],
   stats: [
-    { value: '827', label: '在一起的天数' },
-    { value: '12', label: '一起去过的城市' },
-    { value: '3,206', label: '收藏的照片' },
-    { value: '∞', label: '还没讲完的故事' }
+    { value: '∞', label: '想一起走的路' },
+    { value: '12+', label: '收藏的小旅行' },
+    { value: '365', label: '普通也闪光的日子' },
+    { value: '1', label: '最重要的你' }
   ],
   timeline: [
-    { date: '2024.05', title: '故事开始', text: '一次很普通的聊天，后来变成了每天最期待的消息。', side: 'left' },
-    { date: '2024.09', title: '第一次旅行', text: '带着相机和没做完的攻略，去了海边，也从那天开始爱上一起出发。', side: 'right' },
-    { date: '2025.02', title: '第一张合照墙', text: '把零散照片整理成一面墙，才发现原来我们已经拥有这么多共同回忆。', side: 'left' },
-    { date: '2026.08', title: '我们的博客', text: '决定把故事写成一个网站。以后每一个值得纪念的瞬间，都放进这里。', side: 'right' }
+    { date: '2024.05.20', title: '故事开始', text: '那天其实没有电影里的慢镜头，但后来回想起来，连空气都像被偷偷加了一层柔光。' },
+    { date: '2024.07.06', title: '第一次远行', text: '第一次真正意义上一起出发，迷过路、赶过车，也第一次发现：和对的人在一起，计划之外也是风景。' },
+    { date: '2024.12.31', title: '一起跨年', text: '在人群和灯光里数完最后十秒。新年的第一个愿望没说出口，因为你就在旁边。' },
+    { date: '2025.05.20', title: '第一个周年', text: '一年不是答案，只是证明我们已经一起经历了四季，并且还想继续。' },
+    { date: '2026.02.14', title: '把浪漫变成日常', text: '鲜花会谢，礼物会旧，但“回家路上给你带了喜欢的东西”这种小事，永远不会过期。' },
+    { date: '未来', title: '未完待续', text: '还有好多城市没有去，好多照片没有拍，好多“以后”想和你一起变成“今天”。' }
   ],
-  memories: [
-    { image: '/memories/memory-1.svg', tag: 'TRIP', title: '去海边的那一天', date: '2026.06.18', text: '风很大，头发很乱，但照片每一张都很喜欢。' },
-    { image: '/memories/memory-2.svg', tag: 'DAILY', title: '凌晨一点的便利店', date: '2026.04.03', text: '没有目的地的散步，最后买了两瓶汽水。' },
-    { image: '/memories/memory-3.svg', tag: 'MOVIE', title: '雨天电影清单', date: '2026.02.14', text: '窗外下雨，屋里有电影、薯片和你。' },
-    { image: '/memories/memory-4.svg', tag: 'PHOTO', title: '夕阳前的十分钟', date: '2025.11.09', text: '为了等一场日落，多绕了二十分钟的路。' },
-    { image: '/memories/memory-5.svg', tag: 'CITY', title: '陌生城市的夜', date: '2025.08.27', text: '最喜欢的不是景点，是一起走过的不知名街道。' },
-    { image: '/memories/memory-6.svg', tag: 'HOME', title: '普通周末', date: '2025.05.20', text: '睡到自然醒、点外卖、收拾房间，就是很好的约会。' }
+  moments: [
+    { tag: '早餐', title: '一起吃早餐的周末', text: '睡到自然醒，慢慢磨咖啡，窗帘留一条缝让阳光进来。', emoji: '☕' },
+    { tag: '散步', title: '没有目的地的晚风', text: '最喜欢饭后慢慢走，不赶时间，聊一些没有结论的小事。', emoji: '🌿' },
+    { tag: '下雨', title: '同一把伞下的距离', text: '雨天会让世界变安静，也让我们自然地靠得更近一点。', emoji: '☔' },
+    { tag: '旅行', title: '行李箱里装着期待', text: '每次出发前都兴奋得睡不着，回来后又开始计划下一站。', emoji: '🧳' },
+    { tag: '深夜', title: '凌晨两点的废话', text: '越困越舍不得挂断，很多最真心的话都发生在“再聊五分钟”。', emoji: '🌙' },
+    { tag: '日常', title: '生活里的小确幸', text: '便利店新品、路边的小花、突然很好看的晚霞，都想第一时间分享给你。', emoji: '✨' }
   ],
-  anniversary: {
-    date: '2024-05-20T00:00:00+08:00',
-    title: '下一页，也一起写。',
-    text: '这个网页不需要后台。以后想新增照片、故事或纪念日，只需要改一份静态数据。'
-  }
+  gallery: [
+    { title: '春日来信', sub: '风很轻，你也刚好在身边', tone: 'pink', emoji: '🌸' },
+    { title: '海边黄昏', sub: '日落会消失，但那天不会', tone: 'peach', emoji: '🌅' },
+    { title: '夏夜散步', sub: '蝉鸣、晚风和牵着的手', tone: 'blue', emoji: '🌌' },
+    { title: '旅行途中', sub: '走错的路，也成为共同回忆', tone: 'mint', emoji: '🚞' },
+    { title: '冬日热饮', sub: '玻璃窗起雾，我们写下名字', tone: 'cream', emoji: '🧣' },
+    { title: '平凡一天', sub: '没有节日，也值得纪念', tone: 'lavender', emoji: '📷' }
+  ],
+  letters: [
+    { title: '写给今天的你', date: '2026.08', text: '希望你知道，你不需要永远有趣、永远开心。你只是坐在那里做自己，就已经是我一天里很喜欢的一部分。' },
+    { title: '关于“以后”', date: 'Future', text: '我想要的未来并不复杂：有一盏等彼此回家的灯，有一起做饭的厨房，有偶尔说走就走的旅行，也有很多普通得不能再普通的晚上。' },
+    { title: '谢谢你的出现', date: 'Always', text: '谢谢你让我明白，喜欢不是短暂的心动，而是在漫长的日常里，依然愿意认真听完对方说的每一件小事。' }
+  ],
+  wishlist: [
+    { text: '一起去看一次极光', done: false },
+    { text: '在海边住一周', done: false },
+    { text: '拍一本只属于我们的写真', done: true },
+    { text: '一起做一顿完整的年夜饭', done: true },
+    { text: '去陌生城市坐一次没有目的地的公交', done: false },
+    { text: '拥有一个放满纪念物的小柜子', done: false },
+    { text: '一起养很多绿植', done: true },
+    { text: '每年都拍一张同样姿势的合照', done: false }
+  ],
+  playlist: [
+    { no: '01', title: '慢慢喜欢你', artist: '属于慢慢靠近的温柔' },
+    { no: '02', title: '小宇', artist: '把喜欢藏进安静旋律里' },
+    { no: '03', title: 'Love Story', artist: '像电影一样浪漫一次' },
+    { no: '04', title: '晴天', artist: '青春里没有说完的话' },
+    { no: '05', title: '告白气球', artist: '甜一点，也没关系' }
+  ],
+  quotes: [
+    '我们不是因为完美才相爱，而是在不完美里依然选择靠近。',
+    '最喜欢的不是某个节日，而是很多个“今天也见到你了”。',
+    '想把一生分成很多小格，每一格里都留一点你的痕迹。'
+  ]
 }

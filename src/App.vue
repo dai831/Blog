@@ -1,196 +1,221 @@
 <script setup>
 import { computed, onBeforeUnmount, onMounted, ref } from 'vue'
-import HeartOrbit from './components/HeartOrbit.vue'
-import { siteData } from './data/site'
+import { siteData as d } from './data/site'
 
-const active = ref('首页')
-const mobileOpen = ref(false)
-const now = ref(Date.now())
+const menuOpen = ref(false)
+const currentQuote = ref(0)
+const now = ref(new Date())
 let timer
 
-const anniversaryDays = computed(() => {
-  const start = new Date(siteData.anniversary.date).getTime()
-  return Math.max(0, Math.floor((now.value - start) / 86400000))
+const daysTogether = computed(() => {
+  const start = new Date(`${d.couple.since}T00:00:00`)
+  return Math.max(1, Math.floor((now.value - start) / 86400000) + 1)
 })
 
-const goTo = (name) => {
-  active.value = name
-  mobileOpen.value = false
-  const map = {
-    '首页': 'home',
-    '关于我们': 'about',
-    '故事': 'story',
-    '回忆': 'memories',
-    '纪念日': 'anniversary'
+const nextAnniversary = computed(() => {
+  const [month, day] = d.couple.anniversary.split('-').map(Number)
+  let target = new Date(now.value.getFullYear(), month - 1, day, 0, 0, 0)
+  if (target <= now.value) target = new Date(now.value.getFullYear() + 1, month - 1, day, 0, 0, 0)
+  const diff = target - now.value
+  return {
+    days: Math.floor(diff / 86400000),
+    hours: Math.floor((diff % 86400000) / 3600000),
+    mins: Math.floor((diff % 3600000) / 60000)
   }
-  document.getElementById(map[name])?.scrollIntoView({ behavior: 'smooth' })
+})
+
+const completedWishes = computed(() => d.wishlist.filter(i => i.done).length)
+const wishProgress = computed(() => Math.round(completedWishes.value / d.wishlist.length * 100))
+
+function scrollTo(id) {
+  document.getElementById(id)?.scrollIntoView({ behavior: 'smooth', block: 'start' })
+  menuOpen.value = false
 }
 
-const onScroll = () => {
-  const sections = [
-    ['纪念日', 'anniversary'],
-    ['回忆', 'memories'],
-    ['故事', 'story'],
-    ['关于我们', 'about'],
-    ['首页', 'home']
-  ]
-  const item = sections.find(([, id]) => {
-    const el = document.getElementById(id)
-    return el && el.getBoundingClientRect().top <= 180
-  })
-  if (item) active.value = item[0]
+function nextQuote() {
+  currentQuote.value = (currentQuote.value + 1) % d.quotes.length
 }
 
 onMounted(() => {
-  timer = window.setInterval(() => (now.value = Date.now()), 60000)
-  window.addEventListener('scroll', onScroll, { passive: true })
+  timer = window.setInterval(() => { now.value = new Date() }, 30000)
 })
-
-onBeforeUnmount(() => {
-  clearInterval(timer)
-  window.removeEventListener('scroll', onScroll)
-})
+onBeforeUnmount(() => window.clearInterval(timer))
 </script>
 
 <template>
-  <div class="site-shell">
-    <div class="noise"></div>
-    <header class="nav-shell">
-      <button class="brand" @click="goTo('首页')">
-        <span class="brand-mark">♥</span>
-        <span>{{ siteData.brand }}</span>
+  <div class="page-shell">
+    <div class="ambient ambient-a"></div>
+    <div class="ambient ambient-b"></div>
+
+    <header class="topbar">
+      <button class="brand" @click="scrollTo('home')">
+        <span class="brand-heart">♡</span>
+        <span>{{ d.couple.title }}</span>
       </button>
-
-      <nav class="desktop-nav">
-        <button
-          v-for="item in siteData.nav"
-          :key="item"
-          :class="{ active: active === item }"
-          @click="goTo(item)"
-        >
-          {{ item }}
-        </button>
+      <nav :class="['nav', { open: menuOpen }]">
+        <button v-for="item in d.nav" :key="item[0]" @click="scrollTo(item[0])">{{ item[1] }}</button>
       </nav>
-
-      <button class="menu-btn" @click="mobileOpen = !mobileOpen">{{ mobileOpen ? '×' : '☰' }}</button>
-      <div v-if="mobileOpen" class="mobile-nav">
-        <button v-for="item in siteData.nav" :key="item" @click="goTo(item)">{{ item }}</button>
-      </div>
+      <button class="menu-btn" @click="menuOpen = !menuOpen" aria-label="menu">☰</button>
     </header>
 
     <main>
-      <section id="home" class="hero section-grid">
-        <div class="hero-copy">
-          <div class="eyebrow"><span></span>{{ siteData.hero.eyebrow }}</div>
-          <h1>
-            {{ siteData.hero.titleTop }}
-            <strong>{{ siteData.hero.titleBottom }}</strong>
-          </h1>
-          <p class="hero-description">{{ siteData.hero.description }}</p>
+      <section id="home" class="hero section-wrap">
+        <div class="hero-copy reveal">
+          <div class="eyebrow"><span></span> OUR LITTLE UNIVERSE</div>
+          <h1>{{ d.couple.leftName }} <i>×</i> {{ d.couple.rightName }}</h1>
+          <h2>{{ d.couple.subtitle }}</h2>
+          <p>{{ d.couple.intro }}</p>
           <div class="hero-actions">
-            <button class="primary-btn" @click="goTo('回忆')">看看我们的回忆 <span>↗</span></button>
-            <button class="text-btn" @click="goTo('故事')">从故事开始 →</button>
+            <button class="primary-btn" @click="scrollTo('story')">开始翻阅 <span>→</span></button>
+            <button class="ghost-btn" @click="scrollTo('gallery')">看看我们的照片</button>
           </div>
           <div class="hero-meta">
-            <div><small>OUR DAY ONE</small><strong>{{ siteData.hero.since }}</strong></div>
-            <div class="meta-line"></div>
-            <blockquote>{{ siteData.hero.quote }}</blockquote>
+            <span>Since {{ d.couple.since }}</span><b>·</b><span>{{ d.couple.city }}</span>
           </div>
         </div>
-        <div class="hero-visual">
-          <HeartOrbit />
-          <div class="floating-note note-one">Always on your side.</div>
-          <div class="floating-note note-two">still counting ↓</div>
+
+        <div class="hero-card-wrap">
+          <div class="photo-card card-one">
+            <div class="photo-visual peach"><span>🌷</span></div>
+            <small>KEEP THIS MOMENT</small>
+            <strong>今天也很喜欢你</strong>
+          </div>
+          <div class="photo-card card-two">
+            <div class="photo-visual lilac"><span>☁️</span></div>
+            <small>OUR DAILY LIFE</small>
+            <strong>普通日子，也值得收藏</strong>
+          </div>
+          <div class="floating-note">“一起把以后写得很长。”</div>
         </div>
       </section>
 
-      <section id="about" class="content-section about-section">
-        <div class="section-heading">
-          <span>01 / ABOUT US</span>
-          <h2>两个人，两个世界，<br />慢慢长成同一个宇宙。</h2>
+      <section class="counter-strip section-wrap">
+        <div class="days-card">
+          <span class="tiny-label">WE HAVE BEEN TOGETHER</span>
+          <strong>{{ daysTogether }}</strong>
+          <span>天</span>
+          <p>故事还在继续更新中 ···</p>
         </div>
-
-        <div class="people-grid">
-          <article v-for="(person, index) in siteData.people" :key="person.key" class="person-card">
-            <div class="person-index">0{{ index + 1 }}</div>
-            <div class="avatar-box" :class="`avatar-${person.key}`">
-              <span>{{ person.avatarText }}</span>
-            </div>
-            <div class="person-info">
-              <small>{{ person.alias }}</small>
-              <h3>{{ person.name }}</h3>
-              <p class="role">{{ person.role }}</p>
-              <p>{{ person.bio }}</p>
-              <div class="tag-list">
-                <span v-for="tag in person.tags" :key="tag"># {{ tag }}</span>
-              </div>
-            </div>
-          </article>
-        </div>
-
         <div class="stats-grid">
-          <div v-for="item in siteData.stats" :key="item.label" class="stat-card">
-            <strong>{{ item.value }}</strong>
-            <span>{{ item.label }}</span>
+          <div v-for="s in d.stats" :key="s.label" class="stat-item">
+            <strong>{{ s.value }}</strong><span>{{ s.label }}</span>
           </div>
         </div>
       </section>
 
-      <section id="story" class="content-section story-section">
-        <div class="section-heading split-heading">
-          <div><span>02 / OUR STORY</span><h2>时间会往前走，<br />故事会被留下。</h2></div>
-          <p>我们不需要把每一天都过成电影，只想把真正重要的瞬间认真保存。</p>
+      <section id="story" class="story section-wrap content-section">
+        <div class="section-heading">
+          <span class="section-kicker">01 · OUR STORY</span>
+          <h3>我们是怎么走到今天的</h3>
+          <p>不是所有重要的时刻都轰轰烈烈，更多时候，它只是两个普通人愿意一次又一次走向彼此。</p>
         </div>
-
         <div class="timeline">
-          <div class="timeline-line"></div>
-          <article v-for="(item, index) in siteData.timeline" :key="item.date" class="timeline-item" :class="item.side">
-            <div class="timeline-dot"><span>{{ index + 1 }}</span></div>
+          <article v-for="(item, index) in d.timeline" :key="item.title" class="timeline-item">
+            <div class="timeline-dot">{{ String(index + 1).padStart(2, '0') }}</div>
             <div class="timeline-card">
-              <small>{{ item.date }}</small>
-              <h3>{{ item.title }}</h3>
-              <p>{{ item.text }}</p>
+              <span>{{ item.date }}</span><h4>{{ item.title }}</h4><p>{{ item.text }}</p>
             </div>
           </article>
         </div>
       </section>
 
-      <section id="memories" class="content-section memories-section">
-        <div class="section-heading split-heading">
-          <div><span>03 / MEMORIES</span><h2>我们收藏的，<br />不只是照片。</h2></div>
-          <p>这些卡片都是静态数据，之后直接替换图片和文字就可以继续更新。</p>
-        </div>
-
-        <div class="memory-grid">
-          <article v-for="(item, index) in siteData.memories" :key="item.title" class="memory-card" :class="{ wide: index === 0 || index === 5 }">
-            <div class="memory-image"><img :src="item.image" :alt="item.title" /></div>
-            <div class="memory-overlay"></div>
-            <div class="memory-content">
-              <div class="memory-top"><span>{{ item.tag }}</span><small>{{ item.date }}</small></div>
-              <div><h3>{{ item.title }}</h3><p>{{ item.text }}</p></div>
-            </div>
-          </article>
-        </div>
-      </section>
-
-      <section id="anniversary" class="content-section anniversary-section">
-        <div class="anniversary-panel">
-          <div class="big-number">{{ anniversaryDays }}</div>
-          <div class="anniversary-copy">
-            <span>DAYS TOGETHER</span>
-            <h2>{{ siteData.anniversary.title }}</h2>
-            <p>{{ siteData.anniversary.text }}</p>
-            <button class="primary-btn" @click="goTo('首页')">回到开头 ↑</button>
+      <section id="moments" class="moments-section content-section">
+        <div class="section-wrap">
+          <div class="section-heading horizontal">
+            <div><span class="section-kicker">02 · LITTLE MOMENTS</span><h3>日常，是最漫长的情书</h3></div>
+            <p>真正想保存的，往往不是某个盛大的纪念日，而是那些“今天没发生什么，但和你在一起挺开心”的瞬间。</p>
           </div>
-          <div class="heart-watermark">♥</div>
+          <div class="moment-grid">
+            <article v-for="item in d.moments" :key="item.title" class="moment-card">
+              <div class="moment-icon">{{ item.emoji }}</div><span>{{ item.tag }}</span><h4>{{ item.title }}</h4><p>{{ item.text }}</p>
+            </article>
+          </div>
+        </div>
+      </section>
+
+      <section id="gallery" class="gallery section-wrap content-section">
+        <div class="section-heading centered">
+          <span class="section-kicker">03 · PHOTO DIARY</span>
+          <h3>把喜欢装进相册里</h3>
+          <p>这里先用了唯美色块作为静态占位，后面只需要把它们替换成你们自己的照片就行。</p>
+        </div>
+        <div class="gallery-grid">
+          <article v-for="(g, index) in d.gallery" :key="g.title" :class="['gallery-card', `g-${index+1}`]">
+            <div :class="['gallery-visual', g.tone]"><span>{{ g.emoji }}</span><em>0{{ index+1 }}</em></div>
+            <div class="gallery-caption"><h4>{{ g.title }}</h4><p>{{ g.sub }}</p></div>
+          </article>
+        </div>
+      </section>
+
+      <section id="letters" class="letters content-section">
+        <div class="section-wrap">
+          <div class="section-heading horizontal">
+            <div><span class="section-kicker">04 · LETTERS</span><h3>有些话，想认真写给你</h3></div>
+            <p>聊天记录会被新的消息覆盖，所以把舍不得忘记的话，单独留一页。</p>
+          </div>
+          <div class="letter-grid">
+            <article v-for="(letter, index) in d.letters" :key="letter.title" class="letter-card">
+              <div class="letter-no">0{{ index + 1 }}</div><small>{{ letter.date }}</small><h4>{{ letter.title }}</h4><p>{{ letter.text }}</p><span class="letter-sign">To my favorite person ♡</span>
+            </article>
+          </div>
+        </div>
+      </section>
+
+      <section id="wishlist" class="wishlist section-wrap content-section">
+        <div class="wishlist-panel">
+          <div class="wishlist-copy">
+            <span class="section-kicker">05 · WISH LIST</span><h3>想和你一起完成的事</h3>
+            <p>愿望不一定要惊天动地，小到一起逛超市，大到一起看极光，都值得认真期待。</p>
+            <div class="progress-row"><span>我们的完成度</span><strong>{{ wishProgress }}%</strong></div>
+            <div class="progress"><i :style="{ width: wishProgress + '%' }"></i></div>
+            <small>已完成 {{ completedWishes }} / {{ d.wishlist.length }} 项</small>
+          </div>
+          <div class="wish-list">
+            <div v-for="item in d.wishlist" :key="item.text" :class="['wish-item', { done: item.done }]">
+              <span>{{ item.done ? '✓' : '○' }}</span><p>{{ item.text }}</p><em>{{ item.done ? '已收藏' : '待解锁' }}</em>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section id="music" class="music-section content-section">
+        <div class="section-wrap music-layout">
+          <div class="record-card">
+            <div class="record"><div class="record-center">♡</div></div>
+            <p>PLAYLIST FOR US</p><strong>一些一听就会想起你的歌</strong>
+          </div>
+          <div class="music-list">
+            <div class="section-heading compact"><span class="section-kicker">06 · PLAYLIST</span><h3>一起听过的旋律</h3></div>
+            <div v-for="song in d.playlist" :key="song.no" class="song-row">
+              <span>{{ song.no }}</span><div><strong>{{ song.title }}</strong><small>{{ song.artist }}</small></div><button>♡</button>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section class="quote-section section-wrap content-section">
+        <button class="quote-card" @click="nextQuote">
+          <span>“</span><p>{{ d.quotes[currentQuote] }}</p><small>点击换一句 · OUR WORDS</small>
+        </button>
+      </section>
+
+      <section id="about" class="about section-wrap content-section">
+        <div class="section-heading centered"><span class="section-kicker">07 · NEXT CHAPTER</span><h3>下一次纪念日倒计时</h3><p>我们不急着把未来一次想完，只期待一个又一个可以一起抵达的明天。</p></div>
+        <div class="countdown">
+          <div><strong>{{ nextAnniversary.days }}</strong><span>DAYS</span></div><b>:</b>
+          <div><strong>{{ String(nextAnniversary.hours).padStart(2, '0') }}</strong><span>HOURS</span></div><b>:</b>
+          <div><strong>{{ String(nextAnniversary.mins).padStart(2, '0') }}</strong><span>MINUTES</span></div>
+        </div>
+        <div class="about-note">
+          <span class="mini-heart">♡</span>
+          <p>这个网站会和我们一样慢慢长大。以后可以继续添加新的旅行、新的照片、新的纪念日，还有那些当下看起来普通、未来却一定会很怀念的小事。</p>
         </div>
       </section>
     </main>
 
     <footer>
-      <div><span>♥</span> {{ siteData.brand }}</div>
-      <p>Made with Vue 3 + Vite · Pure static & easy to deploy.</p>
-      <small>© 2026 OUR STORY. ALL MEMORIES RESERVED.</small>
+      <div><strong>{{ d.couple.leftName }} × {{ d.couple.rightName }}</strong><span>Made with love & tiny moments.</span></div>
+      <p>© 2026 {{ d.couple.title }} · 愿所有认真喜欢，都有很长很长的以后。</p>
     </footer>
   </div>
 </template>
