@@ -1,37 +1,47 @@
-# Two of Us · Vue3 + Vite 静态情侣博客
+# Daixiaoming Markdown Blog
+
+本版本保留原来的 Daixiaoming 首页视觉风格，并接入本地 Markdown 文档能力。
+
+## 首页
+
+- 保留原版 `HELLO WORLD`、Daixiaoming、大图推荐卡片、分类、侧栏个人信息、深浅色切换等视觉风格。
+- 首页文章不再写死，优先读取 `src/content/*.md`。
+- 点击首页文章直接进入 Markdown 文档详情。
+
+## Markdown 文档
+
+- 代码内置文档：放在 `src/content/`，所有访问者可见。
+- 浏览器上传文档：保存在当前浏览器 IndexedDB，不上传服务器。
+- 内置文档优先显示，本地上传文档排在后面。
+- 后台路由：`#/admin/articles`。
+- Markdown 编辑器：`#/admin/editor`。
+
+## 常用链接 / 账号库
+
+- 路由：`#/admin/vault`。
+- 支持网址、账号、密码、备注。
+- 支持一键复制账号、密码、完整信息。
+- 数据仅保存在当前浏览器，并使用浏览器 Web Crypto 加密。
+- 不会把真实账号密码写入项目源码。
+
+## 手机端
+
+- 首页使用原版响应式布局。
+- 导航、分类、搜索、管理按钮扩大触控区域。
+- Markdown 编辑器手机端使用“编辑 / 预览”切换。
+- 管理列表、账号库使用适合手机操作的卡片布局。
 
 ## 启动
+
 ```bash
 npm install
 npm run dev
 ```
 
-默认地址：`http://localhost:5173/index`
-
 ## 打包
+
 ```bash
 npm run build
 ```
-生成的 `dist` 目录可直接部署到 Vercel / Netlify / Nginx。
 
-## 修改内容
-主要修改：`src/data/site.js`
-
-- `couple`：姓名、开始日期、纪念日、城市、首页介绍
-- `timeline`：恋爱时间线
-- `moments`：日常卡片
-- `gallery`：照片墙文案
-- `letters`：写给对方的话
-- `wishlist`：愿望清单
-- `playlist`：歌单
-- `quotes`：随机文案
-
-## 换成真实照片
-当前照片区使用 CSS 唯美渐变占位，所以项目开箱即可运行。
-后续可将图片放到 `public/images/`，再把 `gallery` 扩展为 `image: '/images/xxx.jpg'` 并在 `App.vue` 中替换对应的 `.gallery-visual` 即可。
-
-## 风格
-浅奶油白 / 樱花粉 / 雾紫 / 浅蓝 / 薄荷绿，不使用大面积深色。
-
-## Vercel
-项目已附带 `vercel.json`，访问 `/index` 会重写到 SPA 首页。
+生成的 `dist/` 可以部署到静态托管服务。

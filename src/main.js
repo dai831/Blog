@@ -1,19 +1,32 @@
 import { createApp } from 'vue'
-import { createRouter, createWebHistory } from 'vue-router'
+import { createRouter, createWebHashHistory } from 'vue-router'
+import ElementPlus from 'element-plus'
+import 'element-plus/dist/index.css'
+import 'highlight.js/styles/github-dark.css'
 import App from './App.vue'
-import './styles/main.css'
+import HomeView from './views/HomeView.vue'
+import ArticleView from './views/ArticleView.vue'
+import AdminArticlesView from './views/AdminArticlesView.vue'
+import EditorView from './views/EditorView.vue'
+import VaultView from './views/VaultView.vue'
+import NotFoundView from './views/NotFoundView.vue'
+import './styles.css'
 
 const router = createRouter({
-  history: createWebHistory(),
+  history: createWebHashHistory(),
   routes: [
-    { path: '/', redirect: '/index' },
-    { path: '/index', component: App },
-    { path: '/:pathMatch(.*)*', redirect: '/index' }
+    { path: '/', name: 'home', component: HomeView, meta: { title: '文章' } },
+    { path: '/article/:id', name: 'article', component: ArticleView, meta: { title: '文章详情' } },
+    { path: '/admin/articles', name: 'admin-articles', component: AdminArticlesView, meta: { title: '文档管理' } },
+    { path: '/admin/editor/:id?', name: 'admin-editor', component: EditorView, meta: { title: 'Markdown 编辑器' } },
+    { path: '/admin/vault', name: 'admin-vault', component: VaultView, meta: { title: '常用链接与账号' } },
+    { path: '/:pathMatch(.*)*', component: NotFoundView, meta: { title: '页面不存在' } }
   ],
-  scrollBehavior(to) {
-    if (to.hash) return { el: to.hash, behavior: 'smooth' }
-    return { top: 0 }
-  }
+  scrollBehavior: () => ({ top: 0 })
 })
 
-createApp(App).use(router).mount('#app')
+router.beforeEach((to) => {
+  document.title = `${to.meta.title || '博客'} | Markdown Blog`
+})
+
+createApp(App).use(router).use(ElementPlus).mount('#app')
