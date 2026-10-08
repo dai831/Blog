@@ -4,16 +4,10 @@ const router = useRouter()
 </script>
 
 <template>
-  <header class="site-header">
-    <div class="shell header-inner">
-      <button class="brand" @click="router.push('/')">
-        <span class="brand-mark">M</span>
-        <span><strong>Markdown</strong><small>本地文档站</small></span>
-      </button>
-      <nav>
-        <router-link to="/">文档</router-link>
-        <router-link to="/admin/articles">管理</router-link>
-      </nav>
+  <header class="reading-header">
+    <div class="tb-container reading-header-inner">
+      <button class="tb-brand" @click="router.push('/')" aria-label="回到博客首页"><span class="tb-brand-symbol">D<span>.</span></span><span class="tb-brand-name">DAIXIAOMING<span> / DEV JOURNAL</span></span></button>
+      <nav aria-label="站点导航"><button @click="router.push('/')">首页</button><button @click="router.push('/admin/articles')">内容管理 ↗</button></nav>
     </div>
   </header>
 </template>

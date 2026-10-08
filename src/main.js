@@ -11,6 +11,7 @@ import EditorView from './views/EditorView.vue'
 import VaultView from './views/VaultView.vue'
 import NotFoundView from './views/NotFoundView.vue'
 import './styles.css'
+import './tech-blog.css'
 
 const router = createRouter({
   history: createWebHashHistory(),
@@ -26,7 +27,7 @@ const router = createRouter({
 })
 
 router.beforeEach((to) => {
-  document.title = `${to.meta.title || '博客'} | Markdown Blog`
+  document.title = `${to.meta.title || '博客'} | Daixiaoming 技术博客`
 })
 
 createApp(App).use(router).use(ElementPlus).mount('#app')

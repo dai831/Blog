@@ -8,10 +8,7 @@ const routes = [
 	{
 		path: '/login',
 		name: 'login',
-		// route level code-splitting
-		// this generates a separate chunk (login.[hash].js) for this route
-		// which is lazy-loaded when the route is visited.
-		component: () => import(/* webpackChunkName: "login" */ '../views/login.vue'),
+		component: () => import('../views/login.vue'),
 		meta: {
 			title: '登录',
 			isTab: true
@@ -20,10 +17,7 @@ const routes = [
 	{
 		path: '/index',
 		name: 'index',
-		// route level code-splitting
-		// this generates a separate chunk (index.[hash].js) for this route
-		// which is lazy-loaded when the route is visited.
-		component: () => import(/* webpackChunkName: "index" */ '../views/index.vue'),
+		component: () => import('../views/index.vue'),
 		meta: {
 			title: '首页',
 			key: 1,
@@ -33,10 +27,7 @@ const routes = [
 	{
 		path: '/index-detail',
 		name: 'indexDetail',
-		// route level code-splitting
-		// this generates a separate chunk (indexDetail.[hash].js) for this route
-		// which is lazy-loaded when the route is visited.
-		component: () => import(/* webpackChunkName: "indexDetail" */ '../views/indexDetail.vue'),
+		component: () => import('../views/indexDetail.vue'),
 		meta: {
 			title: '文章详情',
 			key: 1.5,
@@ -46,10 +37,7 @@ const routes = [
 	{
 		path: '/library',
 		name: 'library',
-		// route level code-splitting
-		// this generates a separate chunk (library.[hash].js) for this route
-		// which is lazy-loaded when the route is visited.
-		component: () => import(/* webpackChunkName: "library" */ '../views/library.vue'),
+		component: () => import('../views/library.vue'),
 		meta: {
 			title: '分类',
 			key: 10,
@@ -59,10 +47,7 @@ const routes = [
 	{
 		path: '/library-detail',
 		name: 'libraryDetail',
-		// route level code-splitting
-		// this generates a separate chunk (libraryDetail.[hash].js) for this route
-		// which is lazy-loaded when the route is visited.
-		component: () => import(/* webpackChunkName: "libraryDetail" */ '../views/libraryDetail.vue'),
+		component: () => import('../views/libraryDetail.vue'),
 		meta: {
 			title: '分类详情',
 			key: 10.5,
@@ -72,10 +57,7 @@ const routes = [
 	{
 		path: '/home',
 		name: 'home',
-		// route level code-splitting
-		// this generates a separate chunk (home.[hash].js) for this route
-		// which is lazy-loaded when the route is visited.
-		component: () => import(/* webpackChunkName: "home" */ '../views/home.vue'),
+		component: () => import('../views/home.vue'),
 		meta: {
 			title: '美图',
 			key: 2,
@@ -85,10 +67,7 @@ const routes = [
 	{
 		path: '/home-detail',
 		name: 'homeDetail',
-		// route level code-splitting
-		// this generates a separate chunk (homeDetail.[hash].js) for this route
-		// which is lazy-loaded when the route is visited.
-		component: () => import(/* webpackChunkName: "homeDetail" */ '../views/homeDetail.vue'),
+		component: () => import('../views/homeDetail.vue'),
 		meta: {
 			title: '美图详情',
 			key: 3.5,
@@ -98,11 +77,7 @@ const routes = [
 	{
 		path: '/my',
 		name: 'my',
-		// route level code-splitting
-		// this generates a separate chunk (my.[hash].js) for this route
-		// which is lazy-loaded when the route is visited.
-		// component: () => import(/* webpackChunkName: "my" */ '../views/css.md'),
-		component: () => import(/* webpackChunkName: "my" */ '../views/my.vue'),
+		component: () => import('../views/my.vue'),
 		meta: {
 			title: '我的',
 			key: 3,
@@ -112,7 +87,7 @@ const routes = [
 	{
 		path: '/404',
 		name: '404',
-		component: () => import(/* webpackChunkName: "404" */ '../views/404.vue'),
+		component: () => import('../views/404.vue'),
 		meta: {
 			title: '404',
 		}
