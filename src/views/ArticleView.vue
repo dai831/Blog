@@ -1,7 +1,7 @@
 <script setup>
 import { computed, nextTick, onBeforeUnmount, ref, watch } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
-import SiteHeader from '../components/SiteHeader.vue'
+import BlogHeader from '../components/BlogHeader.vue'
 import MarkdownRenderer from '../components/MarkdownRenderer.vue'
 import { categoryLabel, getArticle, listArticles } from '../services/blog'
 
@@ -52,7 +52,7 @@ async function load(id) {
     const [current, list] = await Promise.all([getArticle(id), listArticles()])
     article.value = current
     allArticles.value = list
-    document.title = `${current.title} | Daixiaoming 技术博客`
+    document.title = `${current.title} | Daixiaoming · 生活与代码`
     loading.value = false
     await nextTick()
     headings.value = [...document.querySelectorAll('.reading-paper .markdown-body h2, .reading-paper .markdown-body h3')].map(node => ({
@@ -72,7 +72,7 @@ onBeforeUnmount(() => { window.removeEventListener('scroll', updateScroll); clea
 <template>
   <div class="reading-page">
     <div class="tb-progress" :style="{ width: `${progress}%` }"></div>
-    <SiteHeader />
+    <BlogHeader />
     <main class="reading-main tb-container">
       <button class="reading-back" @click="router.push('/')">← 返回全部文章</button>
       <div v-if="loading" class="reading-state">正在读取文章…</div>

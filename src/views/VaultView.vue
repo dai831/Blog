@@ -1,6 +1,6 @@
 <script setup>
 import { computed, reactive, ref } from 'vue'
-import { ElMessage, ElMessageBox } from 'element-plus'
+import { ElDialog, ElMessage, ElMessageBox } from 'element-plus'
 import AdminNav from '../components/AdminNav.vue'
 import { clearVault, hasVault, saveVault, unlockVault } from '../services/vault'
 
