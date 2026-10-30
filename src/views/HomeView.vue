@@ -16,16 +16,10 @@ const loading = ref(true)
 const error = ref('')
 const activeCategory = ref('全部')
 const visibleCount = ref(6)
-const activePhoto = ref(null)
-const galleryLoading = ref(false)
-const galleryMessage = ref('')
-let galleryPage = 1
 const progress = ref(0)
 const now = ref(new Date())
 let revealObserver
 let clockTimer
-let previousFocus
-let previousOverflow = ''
 
 const weddingDate = new Date(2022, 8, 30)
 const birthday = new Date(2024, 8, 26)
@@ -39,7 +33,6 @@ const anniversaryYears = computed(() => Array.from({ length: marriedYears.value 
 const pageInfo = computed(() => ({
   story: { label: 'OUR LITTLE UNIVERSE', title: '两个人的故事，\n三个人的以后。', text: '从 2022 年 9 月 30 日到现在，收藏时间里最温柔的坐标。', glyph: '♡' },
   journal: { label: 'THE DEVELOPER’S NOTEBOOK', title: '边学边做，\n把答案留在这里。', text: '从真实问题出发，记录前端开发、工程实践和那些终于想通的瞬间。', glyph: '{ }' },
-  gallery: { label: 'A COLLECTION OF BEAUTIFUL THINGS', title: '用眼睛，\n收藏这个世界。', text: '风景、色彩与想象力。点开一张图，让思绪去远处散个步。', glyph: '✦' },
   about: { label: 'ME, IN A FEW WORDS', title: '写代码的人，\n也热爱烟火日常。', text: '一个关于我、热爱和这个小小博客的介绍。很高兴在这里遇见你。', glyph: '☺' }
 })[props.page])
 
@@ -68,7 +61,7 @@ const filtered = computed(() => {
   return displayArticles.value.filter(item => activeCategory.value === '全部' || item.category === activeCategory.value)
 })
 const visibleArticles = computed(() => filtered.value.slice(0, visibleCount.value))
-const gallery = computed(() => wallpapers.value.slice(0, props.page === 'gallery' ? 12 : 6))
+const gallery = computed(() => wallpapers.value.slice(0, 6))
 
 function scrollTo(id) {
   if (id === 'top') window.scrollTo({ top: 0, behavior: 'smooth' })
@@ -77,44 +70,12 @@ function scrollTo(id) {
 function chooseCategory(name) { activeCategory.value = name; visibleCount.value = 6; scrollTo('journal') }
 function openArticle(item) { router.push(`/article/${encodeURIComponent(item.id)}`) }
 function openSearch() { header.value?.openSearch() }
-async function refreshGallery() {
-  galleryLoading.value = true
-  galleryMessage.value = ''
-  const nextPage = galleryPage % 3 + 1
-  const images = await loadWallpapers({ page: nextPage, limit: 12 })
-  if (images.length) { wallpapers.value = images; galleryPage = nextPage }
-  else galleryMessage.value = '这组风景暂时没有送达，请稍后再试。'
-  galleryLoading.value = false
-}
-function onKeydown(event) {
-  if (event.key === 'Escape') activePhoto.value = null
-  if (event.key === 'Tab' && activePhoto.value) {
-    const controls = [...document.querySelectorAll('.tb-lightbox [role="dialog"] button')]
-    const first = controls[0]
-    const last = controls.at(-1)
-    if (event.shiftKey && document.activeElement === first) { event.preventDefault(); last?.focus() }
-    else if (!event.shiftKey && document.activeElement === last) { event.preventDefault(); first?.focus() }
-  }
-}
 function onScroll() { const max = document.documentElement.scrollHeight - innerHeight; progress.value = max > 0 ? Math.min(100, scrollY / max * 100) : 0 }
 function observeReveals() { document.querySelectorAll('.tb-reveal:not(.is-visible)').forEach(node => revealObserver?.observe(node)) }
 watch([visibleArticles, gallery], async () => { await nextTick(); observeReveals() })
-watch(() => Boolean(activePhoto.value), async opened => {
-  if (opened) {
-    previousFocus = document.activeElement
-    previousOverflow = document.body.style.overflow
-    document.body.style.overflow = 'hidden'
-    await nextTick()
-    document.querySelector('.tb-lightbox [role="dialog"] button')?.focus()
-  } else {
-    document.body.style.overflow = previousOverflow
-    previousFocus?.focus()
-  }
-})
 onMounted(async () => {
   clockTimer = window.setInterval(() => { now.value = new Date() }, 60000)
   window.addEventListener('scroll', onScroll, { passive: true })
-  window.addEventListener('keydown', onKeydown)
   onScroll()
   if ('IntersectionObserver' in window) {
     revealObserver = new IntersectionObserver(entries => entries.forEach(entry => {
@@ -122,7 +83,7 @@ onMounted(async () => {
     }), { threshold: .08, rootMargin: '0px 0px -40px 0px' })
     observeReveals()
   } else document.querySelectorAll('.tb-reveal').forEach(node => node.classList.add('is-visible'))
-  const photoTask = ['home', 'gallery'].includes(props.page) ? loadWallpapers({ limit: props.page === 'gallery' ? 12 : 6 }).then(items => { wallpapers.value = items }) : Promise.resolve()
+  const photoTask = props.page === 'home' ? loadWallpapers({ limit: 6 }).then(items => { wallpapers.value = items }) : Promise.resolve()
   try { if (['home', 'journal', 'about'].includes(props.page)) articles.value = await listArticles() }
   catch (cause) { error.value = cause?.message || '文章暂时无法加载' }
   finally { loading.value = false }
@@ -131,9 +92,7 @@ onMounted(async () => {
 onBeforeUnmount(() => {
   window.clearInterval(clockTimer)
   window.removeEventListener('scroll', onScroll)
-  window.removeEventListener('keydown', onKeydown)
   revealObserver?.disconnect()
-  if (activePhoto.value) document.body.style.overflow = previousOverflow
 })
 </script>
 
@@ -162,13 +121,11 @@ onBeforeUnmount(() => {
 <template v-if="page === 'journal'">        <div class="tb-archive-header tb-reveal"><div><span class="tb-eyebrow">THE ARCHIVE</span><h3>继续往下读 <sup>{{ filtered.length }}</sup></h3></div><button @click="openSearch">⌕ <span>搜索文章</span></button></div><div class="tb-category-list" aria-label="文章分类"><button v-for="name in ['全部', ...categories.map(item => item.label)]" :key="name" :class="{ active: activeCategory === name }" @click="chooseCategory(name)">{{ name }}</button></div><div v-if="!loading && !error && !filtered.length" class="tb-state">这个分类暂时没有文章，试试其他方向。</div><div class="tb-article-list"><button v-for="(item, index) in visibleArticles" :key="item.id" class="tb-article-row tb-reveal" @click="openArticle(item)"><span class="tb-row-number">{{ String(index + 1).padStart(2, '0') }}</span><span class="tb-row-main"><span class="tb-row-category">{{ item.category }} <span v-for="tag in item.tags" :key="tag">/ {{ tag }}</span></span><strong>{{ item.title }}</strong><small>{{ item.excerpt }}</small></span><span class="tb-row-date">{{ item.date }}<small>{{ item.read }}</small></span><span class="tb-row-arrow">↗</span></button></div><button v-if="visibleCount < filtered.length" class="tb-load-more" @click="visibleCount += 6">加载更多文章 <span>↓</span></button></template><RouterLink v-else class="tb-inline-link" to="/journal">去文章归档，发现更多 {{ articles.length }} 篇记录 <span>↗</span></RouterLink>
       </div></section>
 
-      <section v-if="page === 'gallery'" id="gallery" class="tb-gallery tb-section"><div class="tb-container"><div class="tb-section-intro tb-reveal"><span class="tb-eyebrow">03 / VISUAL DIARY</span><div class="tb-section-heading"><h2>图片欣赏<span class="tb-gallery-star">✦</span></h2><p>把喜欢的风景，存进眼睛里。偶尔离开屏幕里的代码，看看色彩与远方。</p></div></div><div class="tb-gallery-toolbar"><span>{{ gallery.length }} 个值得停留的画面</span><button class="tb-button tb-button-outline" :disabled="galleryLoading" @click="refreshGallery">{{ galleryLoading ? '风景正在路上…' : '换一组风景' }} <span>⟳</span></button></div><p v-if="galleryMessage" role="status" class="tb-gallery-message">{{ galleryMessage }}</p><div v-if="gallery.length" class="tb-gallery-grid"><button v-for="(photo, index) in gallery" :key="photo.url" class="tb-photo tb-reveal" :class="`tb-photo-${index}`" @click="activePhoto = photo"><img :src="photo.url" :alt="photo.title" loading="lazy"><span class="tb-photo-overlay"><span><small>NO. {{ String(index + 1).padStart(2, '0') }} / {{ photo.category }}</small><strong>{{ photo.title }}</strong></span><b>↗</b></span></button></div><div v-else class="tb-gallery-fallback"><div v-for="(symbol, index) in ['✿', '☼', '✧']" :key="index" class="tb-fallback-art">{{ symbol }}</div><p>图片正在路上，稍后刷新看看。</p></div><p class="tb-gallery-credit">精选壁纸与视觉作品 · 图片版权归原作者所有。</p></div></section>
 
       <section v-if="page === 'about'" id="about" class="tb-about tb-section"><div class="tb-container tb-about-grid"><div class="tb-about-art tb-reveal"><div class="tb-about-circle"><span>D<span>.</span></span><i>KEEP CURIOUS</i></div><span class="tb-about-flower">✿</span><span class="tb-about-smile">☺</span><div class="tb-about-note">你好，很高兴<br>在这里遇见你。<span>↗</span></div></div><div class="tb-about-copy tb-reveal"><span class="tb-eyebrow">04 / A LITTLE ABOUT ME</span><h2>你好，我是<br><span>Daixiaoming<span class="tb-about-dot">.</span></span></h2><p>我是一名前端开发者，喜欢琢磨交互细节，也喜欢把遇到的问题整理成能再次翻阅的答案。工作之外，我同样珍惜和家人在一起的普通日子。</p><p>这个博客是我的小小收藏夹：技术实践、图片灵感、结婚纪念日，以及宝宝成长带来的新视角。愿每次来访，都能发现一点有用或美好的东西。</p><div class="tb-about-tags"><span>Vue & Frontend</span><span>记录生活</span><span>保持好奇</span></div><RouterLink class="tb-button tb-button-dark" to="/playground" style="text-decoration:none">去实验室玩一会儿 <span>↗</span></RouterLink></div></div></section>
       <section v-if="page === 'story'" class="tb-yearbook tb-section"><div class="tb-container"><span class="tb-eyebrow">A YEAR AT A TIME</span><h2>每一个 9 月 30 日，<br>都是新的开始。</h2><div class="tb-year-grid"><div v-for="(entry, index) in anniversaryYears" :key="entry.year"><span>{{ entry.year }}.09.30</span><strong>{{ index === 0 ? '♡' : String(index).padStart(2, '0') }}</strong><small>{{ entry.label }}</small></div></div><p>相伴的日子会继续增加，我们也会继续把平凡过得有声有色。</p></div></section>
       <section v-if="page === 'about'" class="tb-toolbox tb-section"><div class="tb-container"><span class="tb-eyebrow">THINGS I WRITE ABOUT</span><h2>我的技术工具箱 <span>⌘</span></h2><p>从实际写下的 {{ articles.length }} 篇笔记里，看看最近在探索什么。</p><div class="tb-toolbox-grid"><RouterLink v-for="item in categories" :key="item.value" to="/journal"><span>{{ item.label }}</span><strong>{{ articles.filter(article => Number(article.type) === item.value).length }}<small> 篇笔记</small></strong><b>↗</b></RouterLink></div><RouterLink class="tb-inline-link" to="/playground">除了写代码，也一起玩一会儿 <span>↗</span></RouterLink></div></section>
     </main>
     <BlogFooter />
-    <Transition name="tb-modal"><div v-if="activePhoto" class="tb-modal-overlay tb-lightbox" @click.self="activePhoto = null"><div class="tb-lightbox-inner" role="dialog" aria-modal="true" :aria-label="activePhoto.title"><button class="tb-lightbox-close" aria-label="关闭图片" @click="activePhoto = null">✕</button><img :src="activePhoto.url" :alt="activePhoto.title"><div><strong>{{ activePhoto.title }}</strong><span>{{ activePhoto.category }} · 图片作者：{{ activePhoto.credit || '原作者' }}</span></div></div></div></Transition>
   </div>
 </template>

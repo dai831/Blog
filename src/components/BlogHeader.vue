@@ -26,7 +26,7 @@ function titleFor(item) {
 }
 function isActive(path) { return route.path === path || (path === '/journal' && route.path.startsWith('/article/')) }
 async function openSearch() {
-  if (searchOpen.value) return
+  if (searchOpen.value || document.querySelector('.tb-lightbox')) return
   mobileOpen.value = false
   previousFocus = document.activeElement
   previousOverflow = document.body.style.overflow

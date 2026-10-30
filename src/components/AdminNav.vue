@@ -3,10 +3,11 @@ import { useRoute, useRouter } from 'vue-router'
 const route = useRoute()
 const router = useRouter()
 const items = [
+  { path: '/', label: '个人工作台', icon: '◈' },
   { path: '/admin/articles', label: '文档管理', icon: '▤' },
   { path: '/admin/editor', label: '新建文档', icon: '＋' },
   { path: '/admin/vault', label: '常用链接', icon: '⌘' },
-  { path: '/', label: '查看博客', icon: '↗' }
+  { path: '/blog', label: '查看博客', icon: '↗' }
 ]
 function active(path) {
   if (path === '/admin/editor') return route.path.startsWith('/admin/editor')
